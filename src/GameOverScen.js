@@ -2,19 +2,21 @@
  * GG
  * Created by homker on 15/10/29.
  */
-var GameOverLayer = cc.LayerColor.extend({
-    _size:null,
-    _label:null,
-    _baseLayer:null,
+var GameOverLy = cc.Layer.extend({
+    _size: null,
+    _label: null,
+    _baseLayer: null,
     ctor: function () {
+        var self = this;
         this._super();
         this.setColor(cc.color(126, 126, 126, 126));
         this._size = cc.winSize;
         this._baseLayer = cc.Layer.create();
-        this.addChild(this._baseLayer,0);
+        this.addChild(this._baseLayer, 0);
         this._label = cc.LabelTTF.create('Game Over !', "Arial", 60);
         this._label.setPosition(this._size.width / 2, this._size.height / 2);
         this._baseLayer.addChild(this._label, 1);
+        console.log(this.onNewGame);
         var newGameNormal = cc.Sprite.create(res.s_menu, cc.rect(0, 0, 126, 33)),
             newGameSelected = cc.Sprite.create(res.s_menu, cc.rect(0, 33, 126, 33)),
             newGameDisabled = cc.Sprite.create(res.s_menu, cc.rect(0, 33 * 2, 126, 33)),
@@ -23,13 +25,10 @@ var GameOverLayer = cc.LayerColor.extend({
         newGameButton.setAnchorPoint(cc.p(0.5, 0.5));
         newGameButton.setPosition(this._size.width / 2, this._size.height / 2 + 100);
         newGameButton.alignItemsVerticallyWithPadding(10);
-        this._baseLayer.addChild(newGameButton, 1, 2);
-
-        console.log(newGameButton);
-        console.log(newGame);
+        this._baseLayer.addChild(newGameButton, 2, 2);
         return true;
     },
-    onNewGame:function(){
+    onNewGame: function () {
         console.log("this");
         this._size = cc.winSize;
         var scene = cc.Scene.create(),
@@ -46,29 +45,12 @@ var GameOverLayer = cc.LayerColor.extend({
     }
 });
 
-GameOverLayer.create = function () {
-    var gameOverLayer = new GameOverLayer();
-    if (gameOverLayer && gameOverLayer.ctor()) {
-        return gameOverLayer;
-    } else {
-        return null;
-    }
-};
-
-var GameOverScene = cc.Scene.extend({
-    _layer : null,
-    onEnter:function(){
-        this._layer = GameOverLayer.create();
-        this.addChild(this._layer,0);
-        return true;
+var GameOver = cc.Scene.extend({
+    _layer: null,
+    onEnter: function () {
+        this._super();
+        this._layer = new GameOverLy();
+        this.addChild(this._layer);
     }
 });
 
-GameOverScene.create = function(){
-    var scene = new GameOverScene();
-    if(scene && scene.onEnter()){
-        return scene;
-    }else{
-        return null;
-    }
-};

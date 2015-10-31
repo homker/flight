@@ -54,7 +54,7 @@ var GameSceneLayer = cc.Layer.extend({
         self.schedule(self.addEnemyJetWithBullet, 0.5);
 
         //碰撞检测和损毁处理
-        self.schedule(self.checkBoom, 0.3);
+        self.schedule(self.checkBoom, 0.1);
 
         //事件处理
         var keyBoradEventHandle = cc.EventListener.create({
@@ -98,10 +98,11 @@ var GameSceneLayer = cc.Layer.extend({
         this.livesnumber -= 1;
         this.livesBord.setString(this.livesnumber);
         if(this.livesnumber === 0){
-            console.log("this do how much");
-            var gameOver = GameOverScene.create();
+            console.log("this do how much!");
+            this.unscheduleAllCallbacks();
+            var gameOver = new GameOver();
             //cc.director.runScene(gameOver);
-            //cc.director.runScene(cc.TransitionProgressRadialCCW.create(1.2,gameOver));
+            cc.director.runScene(cc.TransitionProgressRadialCCW.create(1.2,gameOver),this);
         }
     },
     updateScore:function(){
@@ -179,8 +180,9 @@ var GameSceneLayer = cc.Layer.extend({
     checkDele: function (checkArr, checkRect,callback) {
         var self = this;
         this.rectCheck(checkArr, checkRect, function (removeArr) {
-            removeArr.forEach(function (ele, index, arr) {
+            removeArr.forEach(function (ele,i,arr) {
                 self.gameLayer02.removeChild(ele, true);
+                var index = removeArr.indexOf(ele);
                 arr.splice(index, 1);
                 callback&&callback();
             })
@@ -189,6 +191,7 @@ var GameSceneLayer = cc.Layer.extend({
     rectCheck: function (checkArr, checkRect, callback) {
         var deleArr = [];
         for (var l = checkArr.length; l--;) {
+            if(checkArr[l] == null){ continue;}
             var checkElem = checkArr[l],
                 checkElemRect = checkElem.getBoundingBox();
             if (cc.rectIntersectsRect(checkElemRect, checkRect)) {
@@ -201,17 +204,19 @@ var GameSceneLayer = cc.Layer.extend({
         var self = this;
         if (sprite.getTag() == 6) { //如果是子弹,则从bullet数组中删除
             //this.gameLayer02.removeChild(sprite, true);
-            this._bullets.forEach(function (ele, index, arr) {
+            this._bullets.forEach(function (ele, i,arr) {
                 if (self.chechkOut(ele.getPosition(), ele)) {
                     self.gameLayer02.removeChild(ele, true);
+                    var index = self._bullets.indexOf(ele);
                     arr.splice(index, 1);
                 }
             })
         }
         if (sprite.getTag() == 1) {
-            this._targets.forEach(function (ele, index, arr) {
+            this._targets.forEach(function (ele, i,arr) {
                 if (self.chechkOut(ele.getPosition(), ele)) {
                     self.gameLayer02.removeChild(ele, true);
+                    var index =self._targets.indexOf(ele);
                     arr.splice(index, 1);
                 }
             })
@@ -251,7 +256,7 @@ var GameSceneLayer = cc.Layer.extend({
     fly2: function (direction) {
         var curPos = this._jetSprite.getPosition();
         curPos = cc.pAdd(curPos, direction);
-        curPos = cc.pClamp(curPos, {x: 0, y: 0}, cc.p(this._size.width, this._size.height))
+        curPos = cc.pClamp(curPos, {x: 0, y: 0}, cc.p(this._size.width, this._size.height));
         this._jetSprite.setPosition(curPos);
     }
 
