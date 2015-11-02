@@ -6,6 +6,7 @@ var GameOverLy = cc.Layer.extend({
     _size: null,
     _label: null,
     _baseLayer: null,
+    _lastScore: null,
     ctor: function () {
         var self = this;
         this._super();
@@ -16,6 +17,9 @@ var GameOverLy = cc.Layer.extend({
         this._label = cc.LabelTTF.create('Game Over !', "Arial", 60);
         this._label.setPosition(this._size.width / 2, this._size.height / 2);
         this._baseLayer.addChild(this._label, 1);
+        this._lastScore = cc.LabelTTF.create("得分:"+window.score+"分", "Arial", 30);
+        this._lastScore.setPosition(this._size.width / 2, this._size.height / 2 - 60);
+        this._baseLayer.addChild(this._lastScore, 1);
         console.log(this.onNewGame);
         var newGameNormal = cc.Sprite.create(res.s_menu, cc.rect(0, 0, 126, 33)),
             newGameSelected = cc.Sprite.create(res.s_menu, cc.rect(0, 33, 126, 33)),
